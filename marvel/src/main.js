@@ -10,6 +10,11 @@ Vue.config.productionTip = false
 
 Vue.use(VueMaterial)
 
+//creating a simple global filter
+Vue.filter('to-uppercase', function(value){
+	return value.toUpperCase()
+})
+
 new Vue({
   router,
   store,

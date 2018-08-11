@@ -18,9 +18,8 @@
   </div>
 </template>
 
-
 <script>
-  import { findIndex } from 'lodash-es'
+  //import { findIndex } from 'lodash-es'
   import store from '@/store.js'
   export default{
     name: 'carrinho',
@@ -51,9 +50,6 @@
     count(){
       return store.state.count
     },
-    cartTotal(){
-      return store.state.cartTotal
-    }
   }
 
   }

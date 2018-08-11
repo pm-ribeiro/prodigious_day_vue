@@ -1,19 +1,21 @@
 <template>
   <div>
     <modal ref="Modal"></modal>
+    <input-filter :query.sync="filter"> </input-filter>
+
     <div v-if="performingQuery">
       <md-empty-state md-icon="schedule" md-label="Carregando produtos"></md-empty-state>
       <md-progress-bar md-mode="query"></md-progress-bar>
     </div>
     <div class="wrapper-cards" v-if="!performingQuery">
-      <md-card v-for="(comic, key, index) in comics" :key="index">
+      <md-card v-for="(comic, key, index) in filteredData" :key="index">
         <md-card-media-cover md-solid>
           <md-card-media md-ratio="1:1">
             <img :src="`${comic.thumbnail.path}.${comic.thumbnail.extension}`" :alt="comic.title">
           </md-card-media>
           <md-card-area>
             <md-card-header>
-              <span class="md-title" v-text="comic.title"></span>
+              <span class="md-title" >{{comic.title | to-uppercase}}</span>
             </md-card-header>
             <md-card-actions>
               <md-button class="md-icon-button" @click="addToCart(comic)">
@@ -36,6 +38,8 @@
   import Modal from '@/components/Modal.vue'
   import axios from 'axios'
   import store from '@/store.js'
+  import InputFilter from "@/components/InputFilter.vue"
+
 
   const requester = axios.create({
     baseURL: '//gateway.marvel.com/v1/public'
@@ -44,10 +48,11 @@
   export default{
     name: 'lista',
     components: {
-      Modal
+      Modal, InputFilter
     },
     data() {
       return {
+        filter:'',
         comics: [],
         apiKey: 'e02eaa35a43502a6e6a14b28492b6b7d',
         performingQuery: true,
@@ -69,7 +74,6 @@
           this.comics = response.data.data.results;
           this.legalText = response.data.attributionHTML;
           this.performingQuery = false;
-          console.log(this.comics);
         })
         .catch((error) => {
           console.log(error)
@@ -85,6 +89,15 @@
     beforeMount(){
       this.getComics();
     },
+
+    computed: {
+    filteredData: function() {
+      //filter by comic title
+      return this.comics.filter( comic => comic.title.toLowerCase()
+        .match(this.filter.toLowerCase()))
+      }
+    }
+
   }
 
 
