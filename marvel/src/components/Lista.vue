@@ -29,13 +29,18 @@
     </div>
     <div v-html="legalText"></div>
   </div>
+
 </template>
+
 <script>
   import Modal from '@/components/Modal.vue'
   import axios from 'axios'
+  import store from '@/store.js'
+
   const requester = axios.create({
     baseURL: '//gateway.marvel.com/v1/public'
   })
+
   export default{
     name: 'lista',
     components: {
@@ -64,6 +69,7 @@
           this.comics = response.data.data.results;
           this.legalText = response.data.attributionHTML;
           this.performingQuery = false;
+          console.log(this.comics);
         })
         .catch((error) => {
           console.log(error)
@@ -73,14 +79,18 @@
         this.$refs.Modal.openModal(comic)
       },
       addToCart(comic){
-        this.$emit('add-cart', comic);
+        store.commit('increment', comic) //using vuex
       }
     },
     beforeMount(){
       this.getComics();
     },
   }
+
+
 </script>
+
+
 <style lang="scss" scoped>
 .wrapper-cards {
   display: flex;

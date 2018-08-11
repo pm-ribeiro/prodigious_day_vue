@@ -2,12 +2,12 @@
 
   <div>
     <md-toolbar class="md-transparent" md-elevation="0">Carrinho</md-toolbar>
-    <md-empty-state v-if="!cartLength" md-icon="shopping_cart" md-label="Carrinho vazio" md-description="Adicione algum produto ao carrinho e ele aparecerá aqui"></md-empty-state>
-    <md-list v-if="cartLength">
-      <md-list-item v-for="(cartItem, key, index) in cart" :key="index">
-        <md-badge class="md-primary" :md-content="cartItem.quantity" />
-        <span class="md-list-item-text" v-text="cartItem.title"></span>
-        <md-button class="md-icon-button md-list-action" @click="removeFromCart(cartItem.id)">
+    <md-empty-state v-if="!count" md-icon="shopping_cart" md-label="Carrinho vazio" md-description="Adicione algum produto ao carrinho e ele aparecerá aqui"></md-empty-state>
+    <md-list v-if="count">
+      <md-list-item v-for="(comic, key, index) in comics" :key="index">
+        <md-badge class="md-primary" :md-content="comic.quantity" />
+        <span class="md-list-item-text" v-text="comic.title"></span>
+        <md-button class="md-icon-button md-list-action" @click="removeFromCart(comic.id)">
           <md-icon>remove_shopping_cart</md-icon>
         </md-button>
       </md-list-item>
@@ -21,44 +21,41 @@
 
 <script>
   import { findIndex } from 'lodash-es'
-
+  import store from '@/store.js'
   export default{
     name: 'carrinho',
     data() {
       return {
-        cartVisible: false,
         cart: []
       }
     },
-    methods: {
-      addToCart(comic) {
-        let index = findIndex(this.cart, (o) => o.id == comic.id)
+  methods: {
+    addToCart(comic) {
+      store.commit('increment', comic)
+    },
+    removeFromCart(comicID) {
+      store.commit('removeFromCart', comicID)
+    }
+  },
+  computed: {
+    cartLength() {
+      return this.cart.length
+    },
+    cartTotal() {
+      return store.state.cartTotal
+      //return this.cart.reduce((accum, curr) => accum + (curr.price * curr.quantity), 0)
+    },
+    comics(){
+      return store.state.comics
+    },
+    count(){
+      return store.state.count
+    },
+    cartTotal(){
+      return store.state.cartTotal
+    }
+  }
 
-        if(index === -1){
-          this.cart.push({
-            id: comic.id,
-            title: comic.title,
-            price: 2.5,
-            quantity: 1
-          })
-        } else {
-          this.$set(this.cart[index], 'quantity', (this.cart[index].quantity + 1))
-        }
-      },
-      removeFromCart(comicID) {
-        let index = findIndex(this.cart, (o) => o.id == comicID)
-        this.$emit('decrease-cart', this.cart[index].quantity);
-        this.cart.splice(index, 1);
-      }
-    },
-    computed: {
-      cartLength() {
-        return this.cart.length
-      },
-      cartTotal() {
-        return this.cart.reduce((accum, curr) => accum + (curr.price * curr.quantity), 0)
-      }
-    },
   }
 </script>
 

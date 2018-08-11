@@ -8,7 +8,8 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     comics: [],
-    count: 0
+    count: 0,
+    cartTotal: 0
   },
   mutations: {
     increment (state, comic) {
@@ -25,9 +26,17 @@ export default new Vuex.Store({
         state.comics[index].quantity++;
         //this.$set(this.cart[index], 'quantity', (this.cart[index].quantity + 1))
       }
+      state.cartTotal = state.comics.reduce((accum, curr) => accum + (curr.price * curr.quantity), 0)
       state.count++;
     },
-    //decrement: state => state.count--
+    removeFromCart(state, comicId) {
+      let index = findIndex(state.comics, (o) => o.id == comicId)
+
+      state.count =  state.count - state.comics[index].quantity
+      state.comics.splice(index, 1)
+
+      state.cartTotal = state.comics.reduce((accum, curr) => accum + (curr.price * curr.quantity), 0)
+    },
   },
   actions: {
 

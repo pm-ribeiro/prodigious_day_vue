@@ -1,6 +1,8 @@
 <template>
   <div class="home">
+
     <md-app md-mode="reveal">
+
       <!-- Navbar -->
       <md-app-toolbar class="md-primary">
         <img class="logo" src="../assets/logo.png">
@@ -13,7 +15,7 @@
           </md-button>
         </md-menu>
         <div class="md-toolbar-section-end">
-          <md-badge :md-content="cartLength">
+          <md-badge :md-content="count">
             <md-button class="md-icon-button" @click="cartVisible = !cartVisible">
               <md-icon>shopping_cart</md-icon>
             </md-button>
@@ -21,55 +23,60 @@
         </div>
       </md-app-toolbar>
       <!-- Fim Navbar -->
+
       <!-- Lista -->
       <md-app-content class="md-scrollbar">
-        <lista ref="Lista" @add-cart="addToCart"></lista>
+        <lista></lista>
       </md-app-content>
       <!-- Fim Lista -->
+
       <!-- Carrinho -->
       <md-app-drawer class="md-right" :md-active.sync="cartVisible" >
-        <carrinho ref="Carrinho" @decrease-cart="removeFromCart"></carrinho>
+        <carrinho></carrinho>
       </md-app-drawer>
       <!-- Fim Carrinho -->
+
     </md-app>
+
   </div>
 </template>
+
 <script>
 // @ is an alias to /src
 import Store from '@/components/Store.vue'
 import Lista from '@/components/Lista.vue'
 import Carrinho from '@/components/Carrinho.vue'
+import store from '@/store.js'
+
 export default {
   name: 'home',
   components: {
-    Store, Lista, Carrinho
+    Store, Lista, Carrinho //Importação dos components
   },
   data() {
     return {
       cartVisible: false,
-      cartLength: 0,
-      comicToBeAdded: ''
     }
   },
-  methods: {
-    addToCart(comic) {
-      this.cartLength += 1;
-      this.$refs.Carrinho.addToCart(comic)
-    },
-    removeFromCart(quantity){
-       this.cartLength -= quantity;
+  computed:{
+    count(){
+      return store.state.count
     }
   }
+
 }
 </script>
+
 <style lang="scss" scoped>
 .logo {
   width: 10%;
   height: auto;
 }
+
 .md-layout-item {
   height: 40px;
   border: 1px solid red;
+
   &:after {
     width: 100%;
     height: 100%;
@@ -78,16 +85,19 @@ export default {
     content: " ";
   }
 }
+
 #app {
   font-family: 'Roboto', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
 .md-app {
   min-height: 100vh;
   max-height: 100vh;
   border: 1px solid rgba(#000, .12);
 }
+
 .md-progress-bar {
   margin: 0 10vw;
 }
